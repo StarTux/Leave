@@ -1,0 +1,8 @@
+name: Leave
+description: Remove loose leaves faster
+author: StarTux
+version: 0.2
+main: com.winthier.leave.LeavePlugin
+depend: []
+commands: {}
+permissions: {}
