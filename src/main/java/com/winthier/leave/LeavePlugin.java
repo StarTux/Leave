@@ -2,28 +2,23 @@ package com.winthier.leave;
 
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.type.Leaves;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority; 
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class LeavePlugin extends JavaPlugin implements Listener {
+public final class LeavePlugin extends JavaPlugin implements Listener {
     // Constants
-    private final BlockFace[] directions = { BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
-    private final int PLAYER_PLACED_BIT = 4;
-    private final int LOG_DISTANCE = 4;
+    private final BlockFace[] directions = {BlockFace.UP, BlockFace.DOWN, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+    private static final int LOG_DISTANCE = 6;
     private final LeafBlower leafBlower = new LeafBlower(this);
 
     @Override
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
-    }
-
-    @Override
-    public void onDisable() {
-        leafBlower.stop();
     }
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.MONITOR)
@@ -50,7 +45,7 @@ public class LeavePlugin extends JavaPlugin implements Listener {
     public boolean updateLeaf(Block leaf) {
         if (!isLeaf(leaf)) return false;
         // Check connectedness
-        if (new LogFinder().search(leaf, LOG_DISTANCE).getResult()) return false;
+        if (new LogFinder().search(leaf, LOG_DISTANCE).isConnected()) return false;
         // Call event
         LeavesDecayEvent event = new LeavesDecayEvent(leaf);
         getServer().getPluginManager().callEvent(event);
@@ -60,23 +55,39 @@ public class LeavePlugin extends JavaPlugin implements Listener {
         return true;
     }
 
-    @SuppressWarnings("deprecation")
-    public boolean isLeaf(Block block) {
+    public static boolean isLeaf(Block block) {
         // Check if block is leaf
         switch (block.getType()) {
-        case LEAVES: case LEAVES_2: break;
-        default: return false;
+        case ACACIA_LEAVES:
+        case BIRCH_LEAVES:
+        case DARK_OAK_LEAVES:
+        case JUNGLE_LEAVES:
+        case OAK_LEAVES:
+        case SPRUCE_LEAVES:
+            Leaves leaves = (Leaves)block.getBlockData();
+            return !leaves.isPersistent();
+        default:
+            return false;
         }
-        // Check if leaf is permanent
-        if (((int)block.getData() & PLAYER_PLACED_BIT) != 0) return false;
-        return true;
     }
 
-    public boolean isLog(Block block) {
+    public static boolean isLog(Block block) {
         switch (block.getType()) {
-        case LOG: case LOG_2: break;
-        default: return false;
+        case ACACIA_LOG:
+        case BIRCH_LOG:
+        case DARK_OAK_LOG:
+        case JUNGLE_LOG:
+        case OAK_LOG:
+        case SPRUCE_LOG:
+        case STRIPPED_ACACIA_LOG:
+        case STRIPPED_BIRCH_LOG:
+        case STRIPPED_DARK_OAK_LOG:
+        case STRIPPED_JUNGLE_LOG:
+        case STRIPPED_OAK_LOG:
+        case STRIPPED_SPRUCE_LOG:
+            return true;
+        default:
+            return false;
         }
-        return true;
     }
 }

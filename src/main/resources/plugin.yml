@@ -1,7 +1,9 @@
 name: Leave
-description: Remove loose leaves faster
+description: Speed up leaf decay
 author: StarTux
-version: 0.2
+version: 0.1
+api-version: 1.13
+website: https://cavetale.com
 main: com.winthier.leave.LeavePlugin
 depend: []
 commands: {}
